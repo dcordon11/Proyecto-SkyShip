@@ -1,0 +1,14 @@
+# Backend
+skyship-backend/node_modules/
+skyship-backend/.env
+
+# Logs
+*.log
+logs/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/
