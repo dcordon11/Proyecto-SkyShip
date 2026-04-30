@@ -2,6 +2,11 @@
 skyship-backend/node_modules/
 skyship-backend/.env
 
+# Frontend
+skyship-frontend/node_modules/
+skyship-frontend/.env
+skyship-frontend/dist/
+
 # Logs
 *.log
 logs/
