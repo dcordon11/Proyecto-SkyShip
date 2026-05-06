@@ -64,3 +64,7 @@ app.use("/api/envios", enviosRoutes);
 const adminRoutes = require("./routes/admin_routes");
 
 app.use("/api/admin", adminRoutes);
+
+const contactoRoutes = require("./routes/contacto_routes");
+
+app.use("/api/contacto", contactoRoutes);

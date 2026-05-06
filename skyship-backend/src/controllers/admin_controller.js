@@ -149,10 +149,26 @@ const obtenerDashboard = async (req, res) => {
   }
 };
 
+const obtenerContactos = async (req, res) => {
+  try {
+    const [contactos] = await db.query(
+      "SELECT * FROM contactos ORDER BY fecha_creacion DESC"
+    );
+
+    res.json(contactos);
+  } catch (error) {
+    res.status(500).json({
+      message: "Error al obtener contactos",
+      error: error.message,
+    });
+  }
+};
+
 module.exports = {
   obtenerTodosEnvios,
   actualizarEnvioAdmin,
   eliminarEnvioAdmin,
   obtenerUsuarios,
   obtenerDashboard, 
+  obtenerContactos,
 };

@@ -6,11 +6,19 @@ const crearEnvio = async (req, res) => {
     const {
       origen,
       destino,
+      direccion_entrega,
       region,
       peso,
       tipo_paquete,
       metodo_entrega,
+      costo_estimado,
     } = req.body;
+
+    if (!direccion_entrega) {
+      return res.status(400).json({
+        message: "La dirección exacta de entrega es obligatoria",
+      });
+    }
 
     if (!origen || !destino) {
       return res.status(400).json({
@@ -18,33 +26,40 @@ const crearEnvio = async (req, res) => {
       });
     }
 
+    if (!peso || Number(peso) <= 0) {
+      return res.status(400).json({
+        message: "El peso debe ser mayor a 0",
+      });
+    }
+
     const usuario_id = req.user.id;
 
-    // Generar código de guía simple
     const codigo_guia = "SKY-" + Date.now();
 
-    const costo_estimado = peso ? peso * 8 + 25 : 25;
+    const costoFinal = costo_estimado || Number(peso) * 8 + 25;
 
     await db.query(
       `INSERT INTO envios 
-      (codigo_guia, usuario_id, origen, destino, region, peso, tipo_paquete, metodo_entrega, costo_estimado)
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        (codigo_guia, usuario_id, origen, destino, direccion_entrega, region, peso, tipo_paquete, metodo_entrega, costo_estimado)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         codigo_guia,
         usuario_id,
         origen,
         destino,
+        direccion_entrega,
         region,
         peso,
         tipo_paquete,
         metodo_entrega,
-        costo_estimado,
+        costoFinal,
       ]
     );
 
     res.status(201).json({
       message: "Envío creado correctamente",
       codigo_guia,
+      costo_estimado: costoFinal,
     });
   } catch (error) {
     res.status(500).json({
@@ -99,7 +114,6 @@ const obtenerEnvio = async (req, res) => {
   }
 };
 
-
 // Actualizar envío propio
 const actualizarEnvio = async (req, res) => {
   try {
@@ -109,27 +123,42 @@ const actualizarEnvio = async (req, res) => {
     const {
       origen,
       destino,
+      direccion_entrega,
       region,
       peso,
       tipo_paquete,
       metodo_entrega,
+      costo_estimado,
     } = req.body;
 
-    const costo_estimado = peso ? peso * 8 + 25 : 25;
+    if (!origen || !destino) {
+      return res.status(400).json({
+        message: "Origen y destino son obligatorios",
+      });
+    }
+
+    if (!peso || Number(peso) <= 0) {
+      return res.status(400).json({
+        message: "El peso debe ser mayor a 0",
+      });
+    }
+
+    const costoFinal = costo_estimado || Number(peso) * 8 + 25;
 
     const [result] = await db.query(
       `UPDATE envios
-       SET origen = ?, destino = ?, region = ?, peso = ?, 
+       SET origen = ?, destino = ?, direccion_entrega = ?, region = ?, peso = ?, 
            tipo_paquete = ?, metodo_entrega = ?, costo_estimado = ?
        WHERE id = ? AND usuario_id = ?`,
       [
         origen,
         destino,
+        direccion_entrega,
         region,
         peso,
         tipo_paquete,
         metodo_entrega,
-        costo_estimado,
+        costoFinal,
         id,
         usuario_id,
       ]
@@ -170,7 +199,6 @@ const eliminarEnvio = async (req, res) => {
       error: error.message,
     });
   }
-
 };
 
 module.exports = {
