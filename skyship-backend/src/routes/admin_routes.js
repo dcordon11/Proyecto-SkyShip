@@ -10,7 +10,9 @@ const {
   actualizarEnvioAdmin,
   eliminarEnvioAdmin,
   obtenerUsuarios,
-  obtenerContactos
+  obtenerContactos,
+  actualizarUsuario,
+  eliminarUsuario,
 } = require("../controllers/admin_controller");
 
 // TODAS protegidas con admin
@@ -43,6 +45,27 @@ router.get(
   verifyToken,
   checkRole("admin"),
   obtenerContactos
+);
+
+router.get(
+  "/usuarios",
+  verifyToken,
+  checkRole("admin"),
+  obtenerUsuarios
+);
+
+router.put(
+  "/usuarios/:id",
+  verifyToken,
+  checkRole("admin"),
+  actualizarUsuario
+);
+
+router.delete(
+  "/usuarios/:id",
+  verifyToken,
+  checkRole("admin"),
+  eliminarUsuario
 );
 
 
